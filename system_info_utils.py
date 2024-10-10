@@ -1,4 +1,5 @@
 # system_info_utils.py
+# pip install psutil
 
 import platform
 import os
