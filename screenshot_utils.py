@@ -1,3 +1,7 @@
+# pip install pyautogui
+# pip install selenium
+# install chromedriver
+
 import pyautogui
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
