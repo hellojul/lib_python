@@ -1,6 +1,3 @@
-# system_info_utils.py
-# pip install psutil
-
 import platform
 import os
 import psutil
@@ -8,180 +5,262 @@ import socket
 import shutil
 import time
 import uuid
+import json
+import math
 
-# 1. Function to get the operating system details
-# Fonction pour obtenir les détails du système d'exploitation
-def get_os_info():
-    return {
-        "OS": platform.system(),
-        "OS Version": platform.version(),
-        "OS Release": platform.release(),
-        "Machine": platform.machine(),
-        "Processor": platform.processor()
-    }
+class SystemInfo:
+    """
+    Classe pour gérer et afficher les informations du système, du CPU, de la mémoire, du disque,
+    du réseau et d'autres statistiques liées au système.
+    """
 
-# 2. Function to get CPU information
-# Fonction pour obtenir des informations sur le processeur (CPU)
-def get_cpu_info():
-    return {
-        "Physical Cores": psutil.cpu_count(logical=False),
-        "Total Cores": psutil.cpu_count(logical=True),
-        "CPU Frequency": psutil.cpu_freq()._asdict(),
-        "CPU Usage Per Core": psutil.cpu_percent(percpu=True),
-        "Total CPU Usage": psutil.cpu_percent()
-    }
-
-# 3. Function to get memory (RAM) information
-# Fonction pour obtenir des informations sur la mémoire (RAM)
-def get_memory_info():
-    svmem = psutil.virtual_memory()
-    return {
-        "Total": svmem.total,
-        "Available": svmem.available,
-        "Used": svmem.used,
-        "Percentage": svmem.percent
-    }
-
-# 4. Function to get disk usage information
-# Fonction pour obtenir des informations sur l'utilisation des disques
-def get_disk_info():
-    partitions = psutil.disk_partitions()
-    disk_info = []
-    for partition in partitions:
-        usage = psutil.disk_usage(partition.mountpoint)
-        disk_info.append({
-            "Device": partition.device,
-            "Mountpoint": partition.mountpoint,
-            "File System Type": partition.fstype,
-            "Total Size": usage.total,
-            "Used": usage.used,
-            "Free": usage.free,
-            "Percentage": usage.percent
-        })
-    return disk_info
-
-# 5. Function to get network information
-# Fonction pour obtenir des informations réseau
-def get_network_info():
-    if_addrs = psutil.net_if_addrs()
-    if_stats = psutil.net_if_stats()
-    network_info = {}
-    for interface_name, interface_addresses in if_addrs.items():
-        addresses = []
-        for address in interface_addresses:
-            addr_info = {}
-            if str(address.family) == 'AddressFamily.AF_INET':
-                addr_info['IP Address'] = address.address
-                addr_info['Netmask'] = address.netmask
-                addr_info['Broadcast IP'] = address.broadcast
-            elif str(address.family) == 'AddressFamily.AF_PACKET':
-                addr_info['MAC Address'] = address.address
-                addr_info['Netmask'] = address.netmask
-                addr_info['Broadcast MAC'] = address.broadcast
-            addresses.append(addr_info)
-        
-        network_info[interface_name] = {
-            "Addresses": addresses,
-            "Is Up": if_stats[interface_name].isup,
-            "Speed (Mbps)": if_stats[interface_name].speed
+    @staticmethod
+    def get_os_info():
+        """
+        Retourne les détails du système d'exploitation.
+        """
+        return {
+            "OS": platform.system(),
+            "OS Version": platform.version(),
+            "OS Release": platform.release(),
+            "Machine": platform.machine(),
+            "Processor": platform.processor()
         }
-    return network_info
 
-# 6. Function to get current user information
-# Fonction pour obtenir des informations sur l'utilisateur actuel
-def get_user_info():
-    return {
-        "Username": os.getlogin(),
-        "User ID": os.getuid(),
-        "Group ID": os.getgid(),
-        "Home Directory": os.path.expanduser("~")
-    }
+    @staticmethod
+    def get_cpu_info():
+        """
+        Retourne les informations sur le processeur (CPU).
+        """
+        return {
+            "Physical Cores": psutil.cpu_count(logical=False),
+            "Total Cores": psutil.cpu_count(logical=True),
+            "CPU Frequency": psutil.cpu_freq()._asdict(),
+            "CPU Usage Per Core": psutil.cpu_percent(percpu=True),
+            "Total CPU Usage": psutil.cpu_percent(interval=1)
+        }
 
-# 7. Function to get uptime of the system
-# Fonction pour obtenir le temps d'activité (uptime) du système
-def get_uptime():
-    boot_time_timestamp = psutil.boot_time()
-    bt = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(boot_time_timestamp))
-    return {
-        "Boot Time": bt,
-        "Uptime (seconds)": time.time() - boot_time_timestamp
-    }
+    @staticmethod
+    def get_memory_info():
+        """
+        Retourne les informations sur la mémoire RAM.
+        """
+        svmem = psutil.virtual_memory()
+        return {
+            "Total": SystemInfo.convert_size(svmem.total),
+            "Available": SystemInfo.convert_size(svmem.available),
+            "Used": SystemInfo.convert_size(svmem.used),
+            "Percentage": f"{svmem.percent}%"
+        }
 
-# 8. Function to get disk IO statistics
-# Fonction pour obtenir des statistiques sur les entrées/sorties du disque
-def get_disk_io_info():
-    disk_io = psutil.disk_io_counters()
-    return {
-        "Read Count": disk_io.read_count,
-        "Write Count": disk_io.write_count,
-        "Read Bytes": disk_io.read_bytes,
-        "Write Bytes": disk_io.write_bytes
-    }
+    @staticmethod
+    def get_disk_info():
+        """
+        Retourne les informations sur l'utilisation des disques.
+        """
+        partitions = psutil.disk_partitions()
+        disk_info = []
+        for partition in partitions:
+            usage = psutil.disk_usage(partition.mountpoint)
+            disk_info.append({
+                "Device": partition.device,
+                "Mountpoint": partition.mountpoint,
+                "File System Type": partition.fstype,
+                "Total Size": SystemInfo.convert_size(usage.total),
+                "Used": SystemInfo.convert_size(usage.used),
+                "Free": SystemInfo.convert_size(usage.free),
+                "Percentage": f"{usage.percent}%"
+            })
+        return disk_info
 
-# 9. Function to get network IO statistics
-# Fonction pour obtenir des statistiques sur les entrées/sorties réseau
-def get_network_io_info():
-    net_io = psutil.net_io_counters()
-    return {
-        "Bytes Sent": net_io.bytes_sent,
-        "Bytes Received": net_io.bytes_recv,
-        "Packets Sent": net_io.packets_sent,
-        "Packets Received": net_io.packets_recv
-    }
-
-# 10. Function to get battery status (if available)
-# Fonction pour obtenir le statut de la batterie (si disponible)
-def get_battery_info():
-    if hasattr(psutil, "sensors_battery"):
-        battery = psutil.sensors_battery()
-        if battery is not None:
-            return {
-                "Percentage": battery.percent,
-                "Seconds Left": battery.secsleft,
-                "Power Plugged In": battery.power_plugged
+    @staticmethod
+    def get_network_info():
+        """
+        Retourne les informations réseau (interfaces et statistiques).
+        """
+        if_addrs = psutil.net_if_addrs()
+        if_stats = psutil.net_if_stats()
+        network_info = {}
+        for interface_name, interface_addresses in if_addrs.items():
+            addresses = []
+            for address in interface_addresses:
+                addr_info = {}
+                if str(address.family) == 'AddressFamily.AF_INET':
+                    addr_info['IP Address'] = address.address
+                    addr_info['Netmask'] = address.netmask
+                    addr_info['Broadcast IP'] = address.broadcast
+                elif str(address.family) == 'AddressFamily.AF_PACKET':
+                    addr_info['MAC Address'] = address.address
+                addresses.append(addr_info)
+            network_info[interface_name] = {
+                "Addresses": addresses,
+                "Is Up": if_stats[interface_name].isup,
+                "Speed (Mbps)": if_stats[interface_name].speed
             }
-        else:
-            return "Battery information not available"
-    return "Battery monitoring not supported"
+        return network_info
 
-# 11. Function to get the system's hostname and IP address
-# Fonction pour obtenir le nom d'hôte et l'adresse IP du système
-def get_host_info():
-    hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
-    return {
-        "Hostname": hostname,
-        "IP Address": ip_address
-    }
+    @staticmethod
+    def get_user_info():
+        """
+        Retourne les informations sur l'utilisateur actuel.
+        """
+        return {
+            "Username": os.getlogin(),
+            "User ID": os.getuid(),
+            "Group ID": os.getgid(),
+            "Home Directory": os.path.expanduser("~")
+        }
 
-# 12. Function to get system's MAC address
-# Fonction pour obtenir l'adresse MAC du système
-def get_mac_address():
-    mac = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) 
-                    for elements in range(0, 2 * 6, 8)][::-1])
-    return mac
+    @staticmethod
+    def get_uptime():
+        """
+        Retourne le temps d'activité du système (uptime).
+        """
+        boot_time_timestamp = psutil.boot_time()
+        bt = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(boot_time_timestamp))
+        uptime_seconds = time.time() - boot_time_timestamp
+        uptime_formatted = time.strftime('%H:%M:%S', time.gmtime(uptime_seconds))
+        return {
+            "Boot Time": bt,
+            "Uptime (formatted)": uptime_formatted,
+            "Uptime (seconds)": uptime_seconds
+        }
 
-# 13. Function to get current running processes
-# Fonction pour obtenir la liste des processus en cours d'exécution
-def get_running_processes():
-    processes = []
-    for proc in psutil.process_iter(['pid', 'name', 'username', 'status']):
-        processes.append(proc.info)
-    return processes
+    @staticmethod
+    def get_disk_io_info():
+        """
+        Retourne les statistiques d'entrées/sorties des disques.
+        """
+        disk_io = psutil.disk_io_counters()
+        return {
+            "Read Count": disk_io.read_count,
+            "Write Count": disk_io.write_count,
+            "Read Bytes": SystemInfo.convert_size(disk_io.read_bytes),
+            "Write Bytes": SystemInfo.convert_size(disk_io.write_bytes)
+        }
 
-# Example usage of the functions
+    @staticmethod
+    def get_network_io_info():
+        """
+        Retourne les statistiques d'entrées/sorties réseau.
+        """
+        net_io = psutil.net_io_counters()
+        return {
+            "Bytes Sent": SystemInfo.convert_size(net_io.bytes_sent),
+            "Bytes Received": SystemInfo.convert_size(net_io.bytes_recv),
+            "Packets Sent": net_io.packets_sent,
+            "Packets Received": net_io.packets_recv
+        }
+
+    @staticmethod
+    def get_battery_info():
+        """
+        Retourne les informations sur la batterie (si disponible).
+        """
+        if hasattr(psutil, "sensors_battery"):
+            battery = psutil.sensors_battery()
+            if battery is not None:
+                return {
+                    "Percentage": f"{battery.percent}%",
+                    "Seconds Left": battery.secsleft,
+                    "Power Plugged In": battery.power_plugged
+                }
+            else:
+                return "Battery information not available"
+        return "Battery monitoring not supported"
+
+    @staticmethod
+    def get_host_info():
+        """
+        Retourne le nom d'hôte et l'adresse IP du système.
+        """
+        hostname = socket.gethostname()
+        ip_address = socket.gethostbyname(hostname)
+        return {
+            "Hostname": hostname,
+            "IP Address": ip_address
+        }
+
+    @staticmethod
+    def get_mac_address():
+        """
+        Retourne l'adresse MAC du système.
+        """
+        mac = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) 
+                        for elements in range(0, 2 * 6, 8)][::-1])
+        return mac
+
+    @staticmethod
+    def get_running_processes():
+        """
+        Retourne la liste des processus en cours d'exécution.
+        """
+        processes = []
+        for proc in psutil.process_iter(['pid', 'name', 'username', 'status']):
+            processes.append(proc.info)
+        return processes
+
+    # === Fonctions utilitaires ===
+
+    @staticmethod
+    def convert_size(size_bytes):
+        """
+        Convertit une taille en octets en une chaîne lisible (Ko, Mo, Go, etc.).
+        """
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return f"{s} {size_name[i]}"
+
+    @staticmethod
+    def display_json(data):
+        """
+        Affiche les données dans un format JSON lisible pour la console.
+        """
+        print(json.dumps(data, indent=4, ensure_ascii=False))
+
+
+# Exemple d'utilisation de la classe SystemInfo
 if __name__ == "__main__":
-    print("OS Information:", get_os_info())
-    print("CPU Information:", get_cpu_info())
-    print("Memory Information:", get_memory_info())
-    print("Disk Information:", get_disk_info())
-    print("Network Information:", get_network_info())
-    print("User Information:", get_user_info())
-    print("System Uptime:", get_uptime())
-    print("Disk IO Information:", get_disk_io_info())
-    print("Network IO Information:", get_network_io_info())
-    print("Battery Information:", get_battery_info())
-    print("Host Information:", get_host_info())
-    print("MAC Address:", get_mac_address())
-    print("Running Processes:", get_running_processes())
+    print("\nOS Information:")
+    SystemInfo.display_json(SystemInfo.get_os_info())
+
+    print("\nCPU Information:")
+    SystemInfo.display_json(SystemInfo.get_cpu_info())
+
+    print("\nMemory Information:")
+    SystemInfo.display_json(SystemInfo.get_memory_info())
+
+    print("\nDisk Information:")
+    SystemInfo.display_json(SystemInfo.get_disk_info())
+
+    print("\nNetwork Information:")
+    SystemInfo.display_json(SystemInfo.get_network_info())
+
+    print("\nUser Information:")
+    SystemInfo.display_json(SystemInfo.get_user_info())
+
+    print("\nSystem Uptime:")
+    SystemInfo.display_json(SystemInfo.get_uptime())
+
+    print("\nDisk IO Information:")
+    SystemInfo.display_json(SystemInfo.get_disk_io_info())
+
+    print("\nNetwork IO Information:")
+    SystemInfo.display_json(SystemInfo.get_network_io_info())
+
+    print("\nBattery Information:")
+    SystemInfo.display_json(SystemInfo.get_battery_info())
+
+    print("\nHost Information:")
+    SystemInfo.display_json(SystemInfo.get_host_info())
+
+    print("\nMAC Address:")
+    print(SystemInfo.get_mac_address())
+
+    print("\nRunning Processes:")
+    SystemInfo.display_json(SystemInfo.get_running_processes())
 
