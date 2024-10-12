@@ -2,131 +2,125 @@ import os
 import shutil
 from datetime import datetime
 
-# === Fonctions pour la manipulation de répertoires ===
+class FileManager:
+    # === Fonctions pour la manipulation de répertoires ===
 
-# Retourne le répertoire de travail actuel
-def get_current_directory():
-    return os.getcwd()
+    def get_current_directory(self) -> str:
+        return os.getcwd()
 
-# Change le répertoire de travail vers le chemin spécifié
-def change_directory(path):
-    os.chdir(path)
+    def change_directory(self, path: str) -> None:
+        os.chdir(path)
 
-# Liste tous les fichiers et répertoires dans le chemin spécifié
-def list_directory_contents(path="."):
-    return os.listdir(path)
+    def list_directory_contents(self, path: str = ".") -> list:
+        return os.listdir(path)
 
-# Crée un répertoire au chemin spécifié
-def create_directory(path):
-    os.mkdir(path)
+    def create_directory(self, path: str) -> None:
+        os.mkdir(path)
 
-# Supprime un répertoire vide au chemin spécifié
-def remove_directory(path):
-    os.rmdir(path)
+    def remove_directory(self, path: str) -> None:
+        os.rmdir(path)
 
-# Crée des répertoires imbriqués
-def create_nested_directories(path):
-    os.makedirs(path)
+    def create_nested_directories(self, path: str) -> None:
+        os.makedirs(path)
 
-# Supprime un répertoire, même s'il contient des sous-dossiers et fichiers
-def remove_nested_directories(path):
-    shutil.rmtree(path)
+    def remove_nested_directories(self, path: str) -> None:
+        shutil.rmtree(path)
 
-# === Fonctions pour la manipulation de fichiers ===
+    # === Fonctions pour la manipulation de fichiers ===
 
-# Crée un fichier vide
-def create_empty_file(path):
-    with open(path, 'w') as file:
-        pass  # Crée un fichier vide
+    def create_empty_file(self, path: str) -> None:
+        with open(path, 'w') as file:
+            pass
 
-# Supprime un fichier
-def remove_file(path):
-    os.remove(path)
+    def remove_file(self, path: str) -> None:
+        os.remove(path)
 
-# Renomme un fichier ou un répertoire
-def rename_file_or_directory(old_path, new_path):
-    os.rename(old_path, new_path)
+    def rename_file_or_directory(self, old_path: str, new_path: str) -> None:
+        os.rename(old_path, new_path)
 
-# Copie un fichier d'une destination à une autre
-def copy_file(source, destination):
-    shutil.copy2(source, destination)
+    def copy_file(self, source: str, destination: str) -> None:
+        shutil.copy2(source, destination)
 
-# Déplace un fichier d'une destination à une autre
-def move_file(source, destination):
-    shutil.move(source, destination)
+    def move_file(self, source: str, destination: str) -> None:
+        shutil.move(source, destination)
 
-# === Fonctions d'information sur les fichiers et répertoires ===
+    # === Fonctions d'information sur les fichiers et répertoires ===
 
-# Retourne la taille d'un fichier
-def get_file_size(path):
-    return os.path.getsize(path)
+    def get_file_size(self, path: str) -> int:
+        return os.path.getsize(path)
 
-# Retourne l'extension d'un fichier
-def get_file_extension(path):
-    return os.path.splitext(path)[1]
+    def get_file_extension(self, path: str) -> str:
+        return os.path.splitext(path)[1]
 
-# Retourne la dernière date de modification d'un fichier
-def get_last_modified_time(path):
-    timestamp = os.path.getmtime(path)
-    return datetime.fromtimestamp(timestamp)
+    def get_last_modified_time(self, path: str) -> datetime:
+        timestamp = os.path.getmtime(path)
+        return datetime.fromtimestamp(timestamp)
 
-# Vérifie si le chemin spécifié est un fichier
-def is_file(path):
-    return os.path.isfile(path)
+    def is_file(self, path: str) -> bool:
+        return os.path.isfile(path)
 
-# Vérifie si le chemin spécifié est un répertoire
-def is_directory(path):
-    return os.path.isdir(path)
+    def is_directory(self, path: str) -> bool:
+        return os.path.isdir(path)
 
-# Vérifie si un fichier existe
-def file_exists(path):
-    return os.path.exists(path)
+    def file_exists(self, path: str) -> bool:
+        return os.path.exists(path)
 
-# Vérifie si un répertoire existe
-def directory_exists(path):
-    return os.path.isdir(path)
+    def directory_exists(self, path: str) -> bool:
+        return os.path.isdir(path)
 
-# === Fonctions sur les chemins de fichiers ===
+    # === Fonctions sur les chemins de fichiers ===
 
-# Retourne le chemin absolu pour un chemin donné
-def get_absolute_path(path):
-    return os.path.abspath(path)
+    def get_absolute_path(self, path: str) -> str:
+        return os.path.abspath(path)
 
-# Concatène plusieurs chemins
-def join_paths(*paths):
-    return os.path.join(*paths)
+    def join_paths(self, *paths: str) -> str:
+        return os.path.join(*paths)
 
-# Sépare un chemin en répertoire et fichier
-def split_path(path):
-    return os.path.split(path)
+    def split_path(self, path: str) -> tuple:
+        return os.path.split(path)
 
-# Retourne le nom de fichier ou le dernier répertoire
-def get_basename(path):
-    return os.path.basename(path)
+    def get_basename(self, path: str) -> str:
+        return os.path.basename(path)
 
-# Retourne le répertoire parent
-def get_dirname(path):
-    return os.path.dirname(path)
+    def get_dirname(self, path: str) -> str:
+        return os.path.dirname(path)
 
-# === Informations sur l'environnement système ===
+    # === Informations sur l'environnement système ===
 
-# Retourne la valeur d'une variable d'environnement
-def get_environment_variable(var):
-    return os.getenv(var)
+    def get_environment_variable(self, var: str) -> str:
+        return os.getenv(var)
 
-# Définit une variable d'environnement
-def set_environment_variable(var, value):
-    os.environ[var] = value
+    def set_environment_variable(self, var: str, value: str) -> None:
+        os.environ[var] = value
 
-# Retourne le répertoire "home" de l'utilisateur actuel
-def get_user_home_directory():
-    return os.path.expanduser("~")
+    def get_user_home_directory(self) -> str:
+        return os.path.expanduser("~")
 
-# Retourne le répertoire temporaire utilisé par le système
-def get_temp_directory():
-    return os.path.gettempdir()
+    def get_temp_directory(self) -> str:
+        return os.path.gettempdir()
 
-# Retourne le nom de la plateforme
-def get_platform_name():
-    return os.name
+    def get_platform_name(self) -> str:
+        return os.name
+
+    # === Fonctions supplémentaires utiles ===
+
+    def copy_directory(self, source: str, destination: str) -> None:
+        shutil.copytree(source, destination)
+
+    def archive_directory(self, source: str, archive_name: str) -> str:
+        return shutil.make_archive(archive_name, 'zip', source)
+
+    def extract_archive(self, archive_path: str, destination: str) -> None:
+        shutil.unpack_archive(archive_path, destination)
+
+    def get_directory_size(self, path: str) -> int:
+        total_size = 0
+        for dirpath, dirnames, filenames in os.walk(path):
+            for f in filenames:
+                fp = os.path.join(dirpath, f)
+                total_size += os.path.getsize(fp)
+        return total_size
+
+    def search_files_by_extension(self, directory: str, extension: str) -> list:
+        return [os.path.join(dp, f) for dp, dn, filenames in os.walk(directory) for f in filenames if f.endswith(extension)]
 
