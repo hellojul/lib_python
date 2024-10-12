@@ -1,97 +1,130 @@
-# Fonctions de manipulation de listes
+import random
 
-def append_item(lst, item):
-    lst.append(item)
+class ListManipulator:
+    """A class for performing various list manipulations."""
 
-def extend_list(lst, lst_to_add):
-    lst.extend(lst_to_add)
+    def append_item(self, lst: list, item) -> None:
+        """Appends an item to the end of the list."""
+        lst.append(item)
 
-def insert_item(lst, index, item):
-    lst.insert(index, item)
+    def extend_list(self, lst: list, lst_to_add: list) -> None:
+        """Extends the list by appending elements from another list."""
+        lst.extend(lst_to_add)
 
-def remove_item(lst, item):
-    lst.remove(item)
+    def insert_item(self, lst: list, index: int, item) -> None:
+        """Inserts an item at the specified index in the list."""
+        lst.insert(index, item)
 
-def pop_item(lst, index=-1):
-    return lst.pop(index)
+    def remove_item(self, lst: list, item) -> None:
+        """Removes the first occurrence of an item from the list."""
+        lst.remove(item)
 
-def clear_list(lst):
-    lst.clear()
+    def pop_item(self, lst: list, index: int = -1):
+        """Removes and returns the item at the specified index (or last item by default)."""
+        return lst.pop(index)
 
-def get_item_at_index(lst, index):
-    return lst[index]
+    def clear_list(self, lst: list) -> None:
+        """Removes all items from the list."""
+        lst.clear()
 
-def find_index_of_item(lst, item):
-    return lst.index(item) if item in lst else -1
+    def get_item_at_index(self, lst: list, index: int):
+        """Returns the item at the specified index."""
+        return lst[index]
 
-def contains_item(lst, item):
-    return item in lst
+    def find_index_of_item(self, lst: list, item) -> int:
+        """Finds the index of the first occurrence of an item, or returns -1 if not found."""
+        return lst.index(item) if item in lst else -1
 
-def count_occurrences(lst, item):
-    return lst.count(item)
+    def contains_item(self, lst: list, item) -> bool:
+        """Checks if the list contains the specified item."""
+        return item in lst
 
-def get_first_n_elements(lst, n):
-    return lst[:n]
+    def count_occurrences(self, lst: list, item) -> int:
+        """Counts the occurrences of an item in the list."""
+        return lst.count(item)
 
-def get_last_n_elements(lst, n):
-    return lst[-n:]
+    def get_first_n_elements(self, lst: list, n: int) -> list:
+        """Returns the first 'n' elements of the list."""
+        return lst[:n]
 
-def get_unique_items(lst):
-    return list(set(lst))
+    def get_last_n_elements(self, lst: list, n: int) -> list:
+        """Returns the last 'n' elements of the list."""
+        return lst[-n:]
 
-def sort_list_ascending(lst):
-    return sorted(lst)
+    def get_unique_items(self, lst: list) -> list:
+        """Returns a list of unique items from the input list."""
+        return list(set(lst))
 
-def sort_list_descending(lst):
-    return sorted(lst, reverse=True)
+    def sort_list_ascending(self, lst: list) -> list:
+        """Returns the list sorted in ascending order."""
+        return sorted(lst)
 
-def reverse_list(lst):
-    return lst[::-1]
+    def sort_list_descending(self, lst: list) -> list:
+        """Returns the list sorted in descending order."""
+        return sorted(lst, reverse=True)
 
-def shuffle_list(lst):
-    import random
-    random.shuffle(lst)
-    return lst
+    def reverse_list(self, lst: list) -> list:
+        """Returns the list in reverse order."""
+        return lst[::-1]
 
-def flatten_list(lst_of_lst):
-    return [item for sublist in lst_of_lst for item in sublist]
+    def shuffle_list(self, lst: list) -> list:
+        """Shuffles the list randomly."""
+        random.shuffle(lst)
+        return lst
 
-def remove_duplicates(lst):
-    return list(dict.fromkeys(lst))
+    def flatten_list(self, lst_of_lst: list) -> list:
+        """Flattens a list of lists into a single list."""
+        return [item for sublist in lst_of_lst for item in sublist]
 
-def map_function_to_list(lst, func):
-    return list(map(func, lst))
+    def remove_duplicates(self, lst: list) -> list:
+        """Removes duplicates from the list while preserving order."""
+        return list(dict.fromkeys(lst))
 
-def is_empty(lst):
-    return len(lst) == 0
+    def map_function_to_list(self, lst: list, func) -> list:
+        """Applies a function to each item in the list."""
+        return list(map(func, lst))
 
-def has_duplicates(lst):
-    return len(lst) != len(set(lst))
+    def is_empty(self, lst: list) -> bool:
+        """Checks if the list is empty."""
+        return len(lst) == 0
 
-def get_common_items(lst1, lst2):
-    return list(set(lst1) & set(lst2))
+    def has_duplicates(self, lst: list) -> bool:
+        """Checks if the list contains duplicate items."""
+        return len(lst) != len(set(lst))
 
-def list_difference(lst1, lst2):
-    return list(set(lst1) - set(lst2))
+    def get_common_items(self, lst1: list, lst2: list) -> list:
+        """Returns the common items between two lists."""
+        return list(set(lst1) & set(lst2))
 
-def concat_lists(lst1, lst2):
-    return lst1 + lst2
+    def list_difference(self, lst1: list, lst2: list) -> list:
+        """Returns the difference between two lists (items in lst1 but not in lst2)."""
+        return list(set(lst1) - set(lst2))
 
-def interleave_lists(lst1, lst2):
-    return [item for pair in zip(lst1, lst2) for item in pair]
+    def concat_lists(self, lst1: list, lst2: list) -> list:
+        """Concatenates two lists."""
+        return lst1 + lst2
 
-def get_max(lst):
-    return max(lst)
+    def interleave_lists(self, lst1: list, lst2: list) -> list:
+        """Interleaves two lists (alternates elements from each)."""
+        return [item for pair in zip(lst1, lst2) for item in pair]
 
-def get_min(lst):
-    return min(lst)
+    def get_max(self, lst: list):
+        """Returns the maximum value in the list."""
+        return max(lst)
 
-def sum_list(lst):
-    return sum(lst)
+    def get_min(self, lst: list):
+        """Returns the minimum value in the list."""
+        return min(lst)
 
-def average_list(lst):
-    return sum(lst) / len(lst) if lst else 0
+    def sum_list(self, lst: list) -> int:
+        """Returns the sum of all elements in the list."""
+        return sum(lst)
 
-def rotate_list(lst, k):
-    return lst[-k:] + lst[:-k]
+    def average_list(self, lst: list) -> float:
+        """Returns the average of the elements in the list."""
+        return sum(lst) / len(lst) if lst else 0
+
+    def rotate_list(self, lst: list, k: int) -> list:
+        """Rotates the list by 'k' elements."""
+        return lst[-k:] + lst[:-k]
 
