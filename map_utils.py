@@ -1,3 +1,5 @@
+# pip install matplotlib basemap geopandas
+
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import geopandas as gpd
