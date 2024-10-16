@@ -17,6 +17,14 @@ def write_text_file(file_path, content):
     with open(file_path, 'w') as file:
         file.write(content)
 
+# Effacer le contenue d'un fichier
+def clear_file_content(file_path):
+    try:
+        with open(file_path, 'w') as file:
+            pass
+    except Exception as e:
+        print(f'Error while clearing the file content: {e}')
+
 # Ajoute du texte à la fin d'un fichier texte
 def append_text_file(file_path, content):
     """Ajoute du texte à la fin d'un fichier texte."""
