@@ -1,59 +1,89 @@
 import subprocess
 
-# Function to execute a bash command and get its output
+# Fonction pour exécuter une commande bash et obtenir sa sortie
 def execute_command(command):
     """
-    Executes a bash command and returns its output as a string.
+    Exécute une commande bash et retourne sa sortie sous forme de chaîne.
     """
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     return result.stdout.strip()
 
-# Function to execute a bash command and get both stdout and stderr
+# Fonction pour exécuter une commande bash et obtenir à la fois stdout et stderr
 def execute_command_full(command):
     """
-    Executes a bash command and returns both stdout and stderr.
+    Exécute une commande bash et retourne à la fois stdout et stderr.
     """
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     return result.stdout.strip(), result.stderr.strip()
 
-# Function to check if a command exists in the system
+# Fonction pour vérifier si une commande existe sur le système
 def command_exists(command):
     """
-    Checks if a given bash command exists on the system.
+    Vérifie si une commande bash donnée existe sur le système.
     """
     result = subprocess.run(f'which {command}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     return result.returncode == 0
 
-# Function to execute a bash command without waiting for it to finish (asynchronous)
+# Fonction pour exécuter une commande bash sans attendre qu'elle se termine (asynchrone)
 def execute_command_async(command):
     """
-    Executes a bash command asynchronously without waiting for it to complete.
+    Exécute une commande bash de manière asynchrone sans attendre sa fin.
     """
     subprocess.Popen(command, shell=True)
 
-# Function to capture the output of a command in real-time
+# Fonction pour capturer la sortie d'une commande en temps réel
 def execute_command_realtime(command):
     """
-    Executes a bash command and streams its output line by line in real-time.
+    Exécute une commande bash et diffuse sa sortie ligne par ligne en temps réel.
     """
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     for line in process.stdout:
         print(line, end='')
 
-# Function to get the exit code of a bash command
+# Fonction pour obtenir le code de sortie d'une commande bash
 def get_command_exit_code(command):
     """
-    Executes a bash command and returns its exit code.
+    Exécute une commande bash et retourne son code de sortie.
     """
     result = subprocess.run(command, shell=True)
     return result.returncode
 
-# Function to run a command with custom environment variables
+# Fonction pour exécuter une commande avec des variables d'environnement personnalisées
 def execute_command_with_env(command, env_vars):
     """
-    Executes a bash command with custom environment variables.
-    `env_vars` should be a dictionary of environment variables.
+    Exécute une commande bash avec des variables d'environnement personnalisées.
+    `env_vars` doit être un dictionnaire de variables d'environnement.
     """
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env_vars)
     return result.stdout.strip()
+
+def execute_command_to_file(command, output_file):
+    """
+    Exécute une commande bash et redirige sa sortie vers un fichier.
+    """
+    with open(output_file, 'w') as file:
+        result = subprocess.run(command, shell=True, stdout=file, stderr=subprocess.PIPE, text=True)
+    return result.returncode
+
+def execute_commands_in_sequence(commands):
+    """
+    Exécute une liste de commandes bash en séquence.
+    """
+    results = {}
+    for command in commands:
+        exit_code = execute_command(command)
+        results[command] = exit_code
+    return results
+
+def get_command_path(command):
+    """
+    Récupère le chemin d'installation d'une commande bash.
+    """
+    result = subprocess.run(f'which {command}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result.returncode == 0:
+        return result.stdout.strip()
+    else:
+        return None
+
+
 
