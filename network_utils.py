@@ -8,7 +8,7 @@ from http.server import SimpleHTTPRequestHandler, HTTPServer
 from email.mime.text import MIMEText
 
 
-# 1. Function to send a GET request to a URL
+# 1. Fonction pour envoyer une requête GET à une URL
 def get_request(url):
     response = requests.get(url)
     if response.status_code == 200:
@@ -17,7 +17,7 @@ def get_request(url):
         return None
 
 
-# 2. Function to send a POST request with data to a URL
+# 2. Fonction pour envoyer une requête POST avec des données à une URL
 def post_request(url, data):
     response = requests.post(url, json=data)
     if response.status_code == 200:
@@ -26,14 +26,14 @@ def post_request(url, data):
         return None
 
 
-# 3. Function to get the local machine's IP address
+# 3. Fonction pour obtenir l'adresse IP de la machine locale
 def get_local_ip():
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)
     return ip_address
 
 
-# 4. Function to ping an address (check connectivity)
+# 4. Fonction pour pinguer une adresse (vérifier la connectivité)
 def ping(address):
     response = os.system(f"ping -c 1 {address}")
     if response == 0:
@@ -42,7 +42,7 @@ def ping(address):
         return False
 
 
-# 5. Function to download a file from a URL and save it locally
+# 5. Fonction pour télécharger un fichier depuis une URL et l'enregistrer localement
 def download_file(url, filename):
     response = requests.get(url)
     if response.status_code == 200:
@@ -52,15 +52,15 @@ def download_file(url, filename):
     return False
 
 
-# 6. Function to start a simple HTTP server
+# 6. Fonction pour démarrer un serveur HTTP simple
 def start_http_server(port=8080):
     server_address = ('', port)
     httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
-    print(f"Serving on port {port}...")
+    print(f"Serveur en cours d'exécution sur le port {port}...")
     httpd.serve_forever()
 
 
-# 7. Function to resolve a hostname to an IP address (DNS lookup)
+# 7. Fonction pour résoudre un nom d'hôte en une adresse IP (recherche DNS)
 def resolve_hostname(hostname):
     try:
         return socket.gethostbyname(hostname)
@@ -68,7 +68,7 @@ def resolve_hostname(hostname):
         return None
 
 
-# 8. Function to send an email via SMTP
+# 8. Fonction pour envoyer un e-mail via SMTP
 def send_email(smtp_server, port, sender_email, receiver_email, subject, body, login, password):
     msg = MIMEText(body)
     msg['Subject'] = subject
@@ -77,16 +77,16 @@ def send_email(smtp_server, port, sender_email, receiver_email, subject, body, l
 
     try:
         with smtplib.SMTP(smtp_server, port) as server:
-            server.starttls()  # Secure the connection
+            server.starttls()  # Sécuriser la connexion
             server.login(login, password)
             server.sendmail(sender_email, receiver_email, msg.as_string())
         return True
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        print(f"Échec de l'envoi de l'e-mail : {e}")
         return False
 
 
-# 9. Function to scan if a port is open on a given IP address
+# 9. Fonction pour scanner si un port est ouvert sur une adresse IP donnée
 def scan_port(ip, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(1)
@@ -98,7 +98,7 @@ def scan_port(ip, port):
         return False
 
 
-# 10. Function to create a TCP client and send a message
+# 10. Fonction pour créer un client TCP et envoyer un message
 def tcp_client(server_ip, server_port, message):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -110,15 +110,15 @@ def tcp_client(server_ip, server_port, message):
         sock.close()
 
 
-# 11. Function to start a simple TCP server
+# 11. Fonction pour démarrer un serveur TCP simple
 def tcp_server(host='localhost', port=65432):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((host, port))
         s.listen()
-        print(f"Listening on {host}:{port}")
+        print(f"À l'écoute sur {host}:{port}")
         conn, addr = s.accept()
         with conn:
-            print(f"Connected by {addr}")
+            print(f"Connecté par {addr}")
             while True:
                 data = conn.recv(1024)
                 if not data:
