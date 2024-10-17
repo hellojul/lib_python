@@ -87,7 +87,7 @@ def get_all_links(soup):
     """
     return [a['href'] for a in soup.find_all('a', href=True)]
 
-def get_all_images(self, soup):
+def get_all_images(soup):
     """
     Récupère toutes les balises <img> d'une page web.
     """
@@ -156,7 +156,7 @@ def get_headers(soup):
         headers.extend([header.get_text() for header in soup.find_all(f'h{i}')])
     return headers
 
-def find_elements_by_tag(self, soup, tag_name):
+def find_elements_by_tag(soup, tag_name):
     """
     Récupère tous les éléments d'une page web avec un nom de balise spécifique.
     """
