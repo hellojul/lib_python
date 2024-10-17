@@ -162,3 +162,22 @@ def find_elements_by_tag(self, soup, tag_name):
     """
     return soup.find_all(tag_name)
 
+
+def get_all_classes_from_page(url):
+    """
+    Récupère toutes les class name de la page web
+    """
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return f"Erreur lors de la récupération de la page : {response.status_code}"
+
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    class_names = set()
+
+    for element in soup.find_all(class_=True):
+        for class_name in element['class']:
+            class_names.add(class_name)
+
+    return list(class_names)
