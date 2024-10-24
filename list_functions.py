@@ -85,6 +85,12 @@ def is_empty(self, lst: list) -> bool:
     """Vérifie si la liste est vide."""
     return len(lst) == 0
 
+def remove_empty_strings(nested_list):
+    """Parcourt chaque sous-liste dans la principale et suprime les chaines vides"""
+    for sublist in nested_list:
+        while '' in sublist:
+            sublist.remove('')
+
 def has_duplicates(self, lst: list) -> bool:
     """Vérifie si la liste contient des éléments en double."""
     return len(lst) != len(set(lst))
