@@ -1,2 +1,2 @@
 # lib_python
-My lib python
+Useful daily functions
