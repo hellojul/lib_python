@@ -4,28 +4,28 @@ import re
 
 def is_valid_email(self, email: str) -> bool:
     """
-    Checks if the input string is a valid email address.
+    Vérifie si la chaîne d'entrée est une adresse e-mail valide.
     """
     pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return bool(re.match(pattern, email))
 
 def is_valid_password(self, password: str) -> bool:
     """
-    Validates a password to ensure it has at least 8 characters,
-    one uppercase letter, one lowercase letter, and one digit.
+    Valide un mot de passe pour s'assurer qu'il contient au moins 8 caractères,
+    une lettre majuscule, une lettre minuscule, et un chiffre.
     """
     pattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$'
     return bool(re.match(pattern, password))
 
 def clean_string(self, input_string: str) -> str:
     """
-    Removes all non-alphanumeric characters from the string.
+    Supprime tous les caractères non alphanumériques de la chaîne.
     """
     return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 
 def remove_extra_spaces(self, text: str) -> str:
     """
-    Removes extra spaces between words in the text.
+    Supprime les espaces supplémentaires entre les mots dans le texte.
     """
     return re.sub(r'\s+', ' ', text).strip()
 
@@ -33,22 +33,22 @@ def remove_extra_spaces(self, text: str) -> str:
 
 def extract_phone_numbers(self, text: str) -> list:
     """
-    Extracts all phone numbers from a given text.
-    Assumes phone numbers are in the format XXX-XXX-XXXX or (XXX) XXX-XXXX.
+    Extrait tous les numéros de téléphone d'un texte donné.
+    Suppose que les numéros sont au format XXX-XXX-XXXX ou (XXX) XXX-XXXX.
     """
     pattern = r'\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}'
     return re.findall(pattern, text)
 
 def extract_emails(self, text: str) -> list:
     """
-    Extracts all email addresses from a given text.
+    Extrait toutes les adresses e-mail d'un texte donné.
     """
     pattern = r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
     return re.findall(pattern, text)
 
 def extract_urls(self, text: str) -> list:
     """
-    Extracts all URLs from a given text.
+    Extrait tous les URL d'un texte donné.
     """
     pattern = r'https?://[^\s]+'
     return re.findall(pattern, text)
@@ -57,26 +57,26 @@ def extract_urls(self, text: str) -> list:
 
 def find_capitalized_words(self, text: str) -> list:
     """
-    Finds all words in the text that start with a capital letter.
+    Trouve tous les mots dans le texte qui commencent par une majuscule.
     """
     pattern = r'\b[A-Z][a-z]*\b'
     return re.findall(pattern, text)
 
 def split_into_words(self, text: str) -> list:
     """
-    Splits a string into individual words.
+    Divise une chaîne en mots individuels.
     """
     return re.findall(r'\b\w+\b', text)
 
 def replace_word(self, text: str, old_word: str, new_word: str) -> str:
     """
-    Replaces all occurrences of old_word with new_word in the text.
+    Remplace toutes les occurrences de old_word par new_word dans le texte.
     """
     return re.sub(rf'\b{old_word}\b', new_word, text)
 
 def censor_profanity(self, text: str, profanity_list: list) -> str:
     """
-    Censors all words in the profanity list by replacing them with '****'.
+    Censure tous les mots dans la liste de vulgarités en les remplaçant par '****'.
     """
     for word in profanity_list:
         text = re.sub(rf'\b{word}\b', '****', text, flags=re.IGNORECASE)
@@ -84,14 +84,14 @@ def censor_profanity(self, text: str, profanity_list: list) -> str:
 
 def find_dates(self, text: str) -> list:
     """
-    Finds all dates in the format DD/MM/YYYY or MM/DD/YYYY.
+    Trouve toutes les dates au format JJ/MM/AAAA ou MM/JJ/AAAA.
     """
     pattern = r'\b(?:\d{2}[-/]\d{2}[-/]\d{4})\b'
     return re.findall(pattern, text)
 
 def find_words_with_pattern(self, text: str, pattern: str) -> list:
     """
-    Finds all words in the text that match a custom regex pattern.
+    Trouve tous les mots dans le texte qui correspondent à un motif regex personnalisé.
     """
     return re.findall(pattern, text)
 
@@ -99,20 +99,20 @@ def find_words_with_pattern(self, text: str, pattern: str) -> list:
 
 def contains_pattern(self, text: str, pattern: str) -> bool:
     """
-    Checks if the text contains a given regex pattern.
+    Vérifie si le texte contient un motif regex donné.
     """
     return bool(re.search(pattern, text))
 
 def is_valid_ip_address(self, ip_address: str) -> bool:
     """
-    Validates if the input string is a valid IPv4 address.
+    Vérifie si la chaîne d'entrée est une adresse IPv4 valide.
     """
     pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
     return bool(re.match(pattern, ip_address))
 
 def is_valid_url(self, url: str) -> bool:
     """
-    Validates if the input string is a valid URL.
+    Vérifie si la chaîne d'entrée est une URL valide.
     """
     pattern = r'https?://[^\s/$.?#].[^\s]*'
     return bool(re.match(pattern, url))
