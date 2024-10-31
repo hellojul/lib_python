@@ -92,34 +92,3 @@ def show_message_box(title="Message", message="Contenu du message", msg_type="in
     elif msg_type == "error":
         messagebox.showerror(title, message)
 
-def create_sample_app():
-    window = create_main_window("Application Tkinter Avancée", 500, 400)
-    center_window(window)
-
-    menu_structure = {
-        "Fichier": [("Ouvrir", lambda: show_message_box("Info", "Ouvrir fichier")),
-                    ("Quitter", window.quit)],
-        "Aide": [("À propos", lambda: show_message_box("À propos", "Application Tkinter"))]
-    }
-    create_menu(window, menu_structure)
-
-    # Création de widgets
-    label = tk.Label(window, text="Animations et Widgets", font=("Arial", 16), bg="lightblue")
-    button = tk.Button(window, text="Change Color", command=lambda: animate_color(label, ["lightblue", "lightgreen", "lightcoral"]))
-    canvas = create_canvas(window, 200, 100)
-    spinbox = create_spinbox(window, 0, 10)
-    slider = create_slider(window, 0, 100)
-
-    # Mise en page
-    widgets = [label, button, spinbox, slider, canvas]
-    pack_widgets(widgets)
-
-    # Dessiner sur le canevas
-    draw_rectangle(canvas, 10, 10, 100, 60, fill="red")
-    draw_circle(canvas, 150, 50, 30, fill="blue")
-
-    # Animation du bouton
-    move_widget(button, 5, 5)
-
-    window.mainloop()
-
