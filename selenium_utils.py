@@ -38,6 +38,24 @@ def get_element_text(driver, css_selector):
     element = driver.find_element(By.CSS_SELECTOR, css_selector)
     return element.text
 
+# Récupérer le texte d'un élément à partir de son id
+def get_text_by_id(driver, element_id):
+    try:
+        element = driver.find_element(By.ID, element_id)
+        return element.text
+    except Exception as e:
+        print(f'Error lors de la récupération du texte avec ID {element_id}: {e}')
+        return None
+
+# Fonction pour récupérer tous les textes d'éléments à partir d'une classe
+def get_all_texts_by_class(driver, class_name):
+    try:
+        elements = driver.find_elements(By.CLASS_NAME, class_name)
+        return [element.text for element in elements]
+    except Exception as e:
+        print(f'Error lors de la récupération des textes avec la class {class_name}: {e}')
+        return []
+
 # Vérifier si un élément existe
 def element_exists(driver, css_selector):
     try:
